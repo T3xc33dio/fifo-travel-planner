@@ -6,6 +6,7 @@ import { ItineraryCard } from '@/components/itinerary/ItineraryCard'
 import { ItineraryDetail } from '@/components/itinerary/ItineraryDetail'
 import { ItineraryForm } from '@/components/itinerary/ItineraryForm'
 import { EmptyState } from '@/components/shared/EmptyState'
+import { Modal } from '@/components/shared/Modal'
 import { useSwingStatus } from '@/hooks/useSwingStatus'
 
 export function TripsPage() {
@@ -17,7 +18,6 @@ export function TripsPage() {
   const status = useSwingStatus()
 
   const selectedItinerary = itineraries.find((i) => i.id === selectedItineraryId)
-
   const conflictIds = new Set(status?.conflictingTrips.map((t) => t.id) ?? [])
 
   const grouped = useMemo(() => {
@@ -31,37 +31,77 @@ export function TripsPage() {
     return map
   }, [itineraries])
 
+  const modalTitle =
+    activeSheet === 'add-itinerary'
+      ? 'Add Trip'
+      : activeSheet === 'edit-itinerary'
+      ? 'Edit Trip'
+      : 'Trip Details'
+
   return (
-    <div className="flex flex-col h-full" style={{ background: '#0d1117' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#0d1117' }}>
       {/* Header row */}
       <div
-        className="flex items-center justify-between px-4 py-3 border-b"
-        style={{ background: '#161b22', borderColor: '#30363d' }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 16px',
+          background: '#161b22',
+          borderBottom: '1px solid #21262d',
+          flexShrink: 0,
+        }}
       >
         <div>
-          <p className="text-xs text-gray-500 uppercase tracking-widest">Scheduled</p>
-          <p className="font-bold text-gray-100">{itineraries.length} trip{itineraries.length !== 1 ? 's' : ''}</p>
+          <p style={{ fontSize: 10, color: '#484f58', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>
+            Scheduled
+          </p>
+          <p style={{ fontSize: 16, fontWeight: 700, color: '#e6edf3', margin: '2px 0 0' }}>
+            {itineraries.length} trip{itineraries.length !== 1 ? 's' : ''}
+          </p>
         </div>
-        {status && status.conflictingTrips.length > 0 && (
-          <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-            style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)' }}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {status && status.conflictingTrips.length > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '5px 10px',
+                borderRadius: 8,
+                background: 'rgba(220,38,38,0.15)',
+                border: '1px solid rgba(220,38,38,0.3)',
+              }}
+            >
+              <span style={{ color: '#f87171', fontSize: 12, fontWeight: 700 }}>
+                ⚠ {status.conflictingTrips.length} conflict{status.conflictingTrips.length > 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
+          <button
+            onClick={() => openSheet('add-itinerary')}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 10,
+              background: '#f16738',
+              border: 'none',
+              color: '#fff',
+              fontSize: 22,
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <span className="text-red-400 text-xs font-bold">
-              ⚠ {status.conflictingTrips.length} conflict{status.conflictingTrips.length > 1 ? 's' : ''}
-            </span>
-          </div>
-        )}
-        <button
-          onClick={() => openSheet('add-itinerary')}
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-white text-xl font-bold"
-          style={{ background: '#f16738' }}
-        >
-          +
-        </button>
+            +
+          </button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-3">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
         {itineraries.length === 0 ? (
           <EmptyState
             title="No trips planned"
@@ -70,14 +110,20 @@ export function TripsPage() {
           />
         ) : (
           Array.from(grouped.entries()).map(([month, trips]) => (
-            <div key={month} className="mb-6">
+            <div key={month} style={{ marginBottom: 24 }}>
               <p
-                className="text-[10px] font-bold uppercase tracking-widest mb-2"
-                style={{ color: '#484f58' }}
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: '#484f58',
+                  marginBottom: 8,
+                }}
               >
                 {month}
               </p>
-              <div className="flex flex-col gap-2">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {trips.map((trip) => (
                   <ItineraryCard
                     key={trip.id}
@@ -94,43 +140,15 @@ export function TripsPage() {
       {(activeSheet === 'itinerary-detail' ||
         activeSheet === 'edit-itinerary' ||
         activeSheet === 'add-itinerary') && (
-        <div
-          className="fixed inset-0 z-50 flex items-end"
-          style={{ background: 'rgba(0,0,0,0.7)' }}
-          onClick={closeSheet}
-        >
-          <div
-            className="w-full rounded-t-2xl max-h-[85vh] overflow-y-auto border-t"
-            style={{ background: '#161b22', borderColor: '#30363d' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full" style={{ background: '#30363d' }} />
-            </div>
-            <div
-              className="flex items-center justify-between px-4 pb-3 border-b"
-              style={{ borderColor: '#30363d' }}
-            >
-              <h2 className="font-bold text-gray-100">
-                {activeSheet === 'add-itinerary' ? 'Add Trip' : activeSheet === 'edit-itinerary' ? 'Edit Trip' : 'Trip Details'}
-              </h2>
-              <button
-                onClick={closeSheet}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 text-xl"
-                style={{ background: '#0d1117' }}
-              >
-                ✕
-              </button>
-            </div>
-            {activeSheet === 'itinerary-detail' && selectedItinerary && (
-              <ItineraryDetail itinerary={selectedItinerary} />
-            )}
-            {activeSheet === 'add-itinerary' && <ItineraryForm onComplete={closeSheet} />}
-            {activeSheet === 'edit-itinerary' && selectedItinerary && (
-              <ItineraryForm existing={selectedItinerary} onComplete={closeSheet} />
-            )}
-          </div>
-        </div>
+        <Modal title={modalTitle} onClose={closeSheet}>
+          {activeSheet === 'itinerary-detail' && selectedItinerary && (
+            <ItineraryDetail itinerary={selectedItinerary} />
+          )}
+          {activeSheet === 'add-itinerary' && <ItineraryForm onComplete={closeSheet} />}
+          {activeSheet === 'edit-itinerary' && selectedItinerary && (
+            <ItineraryForm existing={selectedItinerary} onComplete={closeSheet} />
+          )}
+        </Modal>
       )}
     </div>
   )

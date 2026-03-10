@@ -13,6 +13,13 @@ body {
   -webkit-font-smoothing: antialiased;
   background-color: #0d1117;
   color: #e6edf3;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+#root {
+  height: 100dvh;
+  overflow: hidden;
 }
 
 /* ── react-big-calendar dark overrides ── */
@@ -30,12 +37,12 @@ body {
 
 .rbc-header {
   border-bottom: 1px solid #21262d;
-  padding: 6px 0;
+  padding: 8px 0;
   font-weight: 700;
   font-size: 10px;
   color: #484f58;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .rbc-day-bg {
@@ -78,11 +85,11 @@ body {
 }
 
 .rbc-off-range-bg {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
 .rbc-off-range .rbc-date-cell a {
-  color: #30363d;
+  color: #21262d;
 }
 
 .rbc-event {
@@ -112,4 +119,9 @@ body {
 
 .rbc-row-content {
   z-index: 4;
+}
+
+/* Selected slot highlight */
+.rbc-slot-selection {
+  background-color: rgba(241, 103, 56, 0.2);
 }

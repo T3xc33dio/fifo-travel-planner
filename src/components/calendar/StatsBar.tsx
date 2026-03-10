@@ -8,72 +8,108 @@ const KIND_LABEL: Record<string, string> = {
   leave: 'LEAVE',
 }
 
-const KIND_COLOR: Record<string, { dot: string; text: string; bg: string }> = {
-  work:   { dot: 'bg-blue-500',   text: 'text-blue-400',  bg: 'border-blue-800' },
-  rdo:    { dot: 'bg-green-500',  text: 'text-green-400', bg: 'border-green-800' },
-  travel: { dot: 'bg-amber-500',  text: 'text-amber-400', bg: 'border-amber-800' },
-  leave:  { dot: 'bg-purple-500', text: 'text-purple-400',bg: 'border-purple-800' },
+const KIND_ACCENT: Record<string, string> = {
+  work:   '#1792d8',
+  rdo:    '#22c55e',
+  travel: '#f59e0b',
+  leave:  '#a855f7',
 }
 
 export function StatsBar() {
   const status = useSwingStatus()
-
   if (!status) return null
 
-  const colors = KIND_COLOR[status.currentKind] ?? KIND_COLOR.rdo
+  const accent = KIND_ACCENT[status.currentKind] ?? '#8b949e'
   const conflictCount = status.conflictingTrips.length
 
   return (
-    <div className="grid grid-cols-4 gap-2 px-3 py-2 bg-[#161b22] border-b border-[#30363d]">
-      {/* Current phase */}
-      <div className={`flex flex-col gap-0.5 bg-[#0d1117] rounded-lg px-3 py-2 border ${colors.bg}`}>
-        <div className="flex items-center gap-1.5">
-          <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
-          <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Status</span>
-        </div>
-        <span className={`text-sm font-bold ${colors.text}`}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 8,
+        padding: '10px 12px',
+        background: '#161b22',
+        borderBottom: '1px solid #21262d',
+        flexShrink: 0,
+      }}
+    >
+      {/* Status */}
+      <div
+        style={{
+          background: '#0d1117',
+          borderRadius: 12,
+          padding: '10px 12px',
+          border: `1px solid ${accent}40`,
+          borderLeft: `3px solid ${accent}`,
+        }}
+      >
+        <p style={{ fontSize: 9, fontWeight: 600, color: '#484f58', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>Status</p>
+        <p style={{ fontSize: 12, fontWeight: 800, color: accent, margin: 0, lineHeight: 1 }}>
           {KIND_LABEL[status.currentKind]}
-        </span>
+        </p>
       </div>
 
       {/* Days remaining */}
-      <div className="flex flex-col gap-0.5 bg-[#0d1117] rounded-lg px-3 py-2 border border-[#30363d]">
-        <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Days left</span>
-        <span className="text-sm font-bold text-gray-100">{status.daysRemaining}d</span>
-        <span className="text-[9px] text-gray-600 truncate">
+      <div
+        style={{
+          background: '#0d1117',
+          borderRadius: 12,
+          padding: '10px 12px',
+          border: '1px solid #21262d',
+        }}
+      >
+        <p style={{ fontSize: 9, fontWeight: 600, color: '#484f58', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>Days left</p>
+        <p style={{ fontSize: 12, fontWeight: 800, color: '#e6edf3', margin: '0 0 2px', lineHeight: 1 }}>
+          {status.daysRemaining}d
+        </p>
+        <p style={{ fontSize: 9, color: '#484f58', margin: 0 }}>
           until {format(parseISO(status.nextChangeDate), 'd MMM')}
-        </span>
+        </p>
       </div>
 
       {/* Next trip */}
-      <div className="flex flex-col gap-0.5 bg-[#0d1117] rounded-lg px-3 py-2 border border-[#30363d]">
-        <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Next trip</span>
+      <div
+        style={{
+          background: '#0d1117',
+          borderRadius: 12,
+          padding: '10px 12px',
+          border: '1px solid #21262d',
+        }}
+      >
+        <p style={{ fontSize: 9, fontWeight: 600, color: '#484f58', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>Next trip</p>
         {status.nextTrip ? (
           <>
-            <span className="text-sm font-bold text-[#f16738] truncate leading-tight">
+            <p style={{ fontSize: 12, fontWeight: 800, color: '#f16738', margin: '0 0 2px', lineHeight: 1 }}>
               {format(parseISO(status.nextTrip.startDate), 'd MMM')}
-            </span>
-            <span className="text-[9px] text-gray-600 truncate">{status.nextTrip.label}</span>
+            </p>
+            <p style={{ fontSize: 9, color: '#484f58', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {status.nextTrip.label}
+            </p>
           </>
         ) : (
-          <span className="text-sm text-gray-600">None</span>
+          <p style={{ fontSize: 12, color: '#30363d', margin: 0 }}>None</p>
         )}
       </div>
 
       {/* Conflicts */}
-      <div className={`flex flex-col gap-0.5 rounded-lg px-3 py-2 border ${
-        conflictCount > 0
-          ? 'bg-red-950 border-red-800'
-          : 'bg-[#0d1117] border-[#30363d]'
-      }`}>
-        <span className={`text-[10px] font-semibold uppercase tracking-wide ${
-          conflictCount > 0 ? 'text-red-400' : 'text-gray-500'
-        }`}>Conflicts</span>
-        <span className={`text-sm font-bold ${conflictCount > 0 ? 'text-red-400' : 'text-gray-600'}`}>
-          {conflictCount === 0 ? 'None' : `${conflictCount} trip${conflictCount > 1 ? 's' : ''}`}
-        </span>
+      <div
+        style={{
+          background: conflictCount > 0 ? 'rgba(220,38,38,0.1)' : '#0d1117',
+          borderRadius: 12,
+          padding: '10px 12px',
+          border: conflictCount > 0 ? '1px solid rgba(220,38,38,0.4)' : '1px solid #21262d',
+          borderLeft: conflictCount > 0 ? '3px solid #dc2626' : '1px solid #21262d',
+        }}
+      >
+        <p style={{ fontSize: 9, fontWeight: 600, color: conflictCount > 0 ? '#f87171' : '#484f58', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px' }}>
+          Conflicts
+        </p>
+        <p style={{ fontSize: 12, fontWeight: 800, color: conflictCount > 0 ? '#f87171' : '#30363d', margin: 0, lineHeight: 1 }}>
+          {conflictCount === 0 ? 'None' : `${conflictCount}`}
+        </p>
         {conflictCount > 0 && (
-          <span className="text-[9px] text-red-600">Travel vs work day</span>
+          <p style={{ fontSize: 9, color: '#dc2626', margin: '2px 0 0' }}>trip{conflictCount > 1 ? 's' : ''} overlap</p>
         )}
       </div>
     </div>
