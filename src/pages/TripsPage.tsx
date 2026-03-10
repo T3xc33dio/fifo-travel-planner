@@ -28,9 +28,8 @@ export function TripsPage() {
   }, [itineraries])
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-4 pt-4 pb-2">
-        <h1 className="text-xl font-bold text-gray-900">Trips</h1>
+    <div className="flex flex-col h-full bg-gray-900">
+      <div className="flex items-center justify-end px-4 pt-3 pb-2">
         <button
           onClick={() => openSheet('add-itinerary')}
           className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-600 text-white text-xl"
@@ -49,7 +48,9 @@ export function TripsPage() {
         ) : (
           Array.from(grouped.entries()).map(([month, trips]) => (
             <div key={month} className="mb-6">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{month}</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                {month}
+              </p>
               <div className="flex flex-col gap-3">
                 {trips.map((trip) => (
                   <ItineraryCard key={trip.id} itinerary={trip} />
@@ -60,24 +61,33 @@ export function TripsPage() {
         )}
       </div>
 
-      {(activeSheet === 'itinerary-detail' || activeSheet === 'edit-itinerary' || activeSheet === 'add-itinerary') && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-end" onClick={closeSheet}>
+      {(activeSheet === 'itinerary-detail' ||
+        activeSheet === 'edit-itinerary' ||
+        activeSheet === 'add-itinerary') && (
+        <div
+          className="fixed inset-0 bg-black/60 z-50 flex items-end"
+          onClick={closeSheet}
+        >
           <div
-            className="w-full bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto"
+            className="w-full bg-gray-800 rounded-t-2xl max-h-[85vh] overflow-y-auto border-t border-gray-700"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b">
-              <h2 className="font-semibold text-gray-900">
-                {activeSheet === 'add-itinerary' ? 'Add trip' : activeSheet === 'edit-itinerary' ? 'Edit trip' : 'Trip details'}
+            <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b border-gray-700">
+              <h2 className="font-semibold text-gray-100">
+                {activeSheet === 'add-itinerary'
+                  ? 'Add trip'
+                  : activeSheet === 'edit-itinerary'
+                  ? 'Edit trip'
+                  : 'Trip details'}
               </h2>
-              <button onClick={closeSheet} className="text-gray-400 text-2xl leading-none">&times;</button>
+              <button onClick={closeSheet} className="text-gray-400 text-2xl leading-none">
+                &times;
+              </button>
             </div>
             {activeSheet === 'itinerary-detail' && selectedItinerary && (
               <ItineraryDetail itinerary={selectedItinerary} />
             )}
-            {activeSheet === 'add-itinerary' && (
-              <ItineraryForm onComplete={closeSheet} />
-            )}
+            {activeSheet === 'add-itinerary' && <ItineraryForm onComplete={closeSheet} />}
             {activeSheet === 'edit-itinerary' && selectedItinerary && (
               <ItineraryForm existing={selectedItinerary} onComplete={closeSheet} />
             )}

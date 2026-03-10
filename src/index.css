@@ -11,21 +11,25 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  background-color: #f9fafb;
+  background-color: #111827;
+  color: #f9fafb;
 }
 
-/* react-big-calendar overrides for mobile */
+/* react-big-calendar dark mode overrides */
 .rbc-calendar {
   font-family: inherit;
   font-size: 13px;
+  background-color: #111827;
+  color: #f9fafb;
 }
 
 .rbc-month-view {
   border: none;
+  background-color: #111827;
 }
 
 .rbc-header {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #374151;
   padding: 6px 0;
   font-weight: 600;
   font-size: 11px;
@@ -37,14 +41,27 @@ body {
   min-height: 52px;
 }
 
+.rbc-month-row {
+  border-color: #374151;
+}
+
+.rbc-day-bg + .rbc-day-bg {
+  border-color: #374151;
+}
+
+.rbc-month-view .rbc-month-row + .rbc-month-row {
+  border-color: #374151;
+}
+
 .rbc-date-cell {
   padding: 4px 6px;
   font-size: 13px;
   font-weight: 500;
+  color: #d1d5db;
 }
 
 .rbc-today {
-  background-color: transparent;
+  background-color: rgba(37, 99, 235, 0.12) !important;
 }
 
 .rbc-today .rbc-date-cell a {
@@ -59,14 +76,37 @@ body {
 }
 
 .rbc-off-range-bg {
-  background-color: rgba(0,0,0,0.02);
+  background-color: rgba(0,0,0,0.25);
+}
+
+.rbc-off-range .rbc-date-cell a {
+  color: #4b5563;
 }
 
 .rbc-event {
   min-height: 16px;
 }
 
+.rbc-event:focus {
+  outline: none;
+}
+
+.rbc-event-content {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 .rbc-show-more {
   font-size: 10px;
-  color: #2563eb;
+  color: #60a5fa;
+  background: transparent;
+}
+
+.rbc-row-bg {
+  background-color: #111827;
+}
+
+.rbc-row-content {
+  z-index: 4;
 }

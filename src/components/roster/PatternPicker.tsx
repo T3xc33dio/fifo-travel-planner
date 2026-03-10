@@ -19,7 +19,7 @@ export function PatternPicker({ onSelect, selectedDaysOn, selectedDaysOff }: Pro
             className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-colors ${
               active
                 ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-700 border-gray-200 active:bg-gray-50'
+                : 'bg-gray-700 text-gray-200 border-gray-600 active:bg-gray-600'
             }`}
           >
             {preset.label}
@@ -32,7 +32,7 @@ export function PatternPicker({ onSelect, selectedDaysOn, selectedDaysOff }: Pro
         className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-colors ${
           selectedDaysOn === 0
             ? 'bg-blue-600 text-white border-blue-600'
-            : 'bg-white text-gray-700 border-gray-200 active:bg-gray-50'
+            : 'bg-gray-700 text-gray-200 border-gray-600 active:bg-gray-600'
         }`}
       >
         Custom pattern...

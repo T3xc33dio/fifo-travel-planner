@@ -63,7 +63,7 @@ export function RosterSetup({ onComplete }: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 p-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Swing pattern</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">Swing pattern</label>
         <PatternPicker
           selectedDaysOn={showCustom ? 0 : daysOn}
           selectedDaysOff={showCustom ? 0 : daysOff}
@@ -83,43 +83,43 @@ export function RosterSetup({ onComplete }: Props) {
       {showCustom && (
         <div className="flex gap-3">
           <div className="flex-1">
-            <label className="block text-xs text-gray-600 mb-1">Days on</label>
+            <label className="block text-xs text-gray-400 mb-1">Days on</label>
             <input
               type="number"
               {...register('daysOn')}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
+              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-100"
               placeholder="14"
             />
-            {errors.daysOn && <p className="text-red-500 text-xs mt-1">{errors.daysOn.message}</p>}
+            {errors.daysOn && <p className="text-red-400 text-xs mt-1">{errors.daysOn.message}</p>}
           </div>
           <div className="flex-1">
-            <label className="block text-xs text-gray-600 mb-1">Days off</label>
+            <label className="block text-xs text-gray-400 mb-1">Days off</label>
             <input
               type="number"
               {...register('daysOff')}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
+              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-100"
               placeholder="7"
             />
-            {errors.daysOff && <p className="text-red-500 text-xs mt-1">{errors.daysOff.message}</p>}
+            {errors.daysOff && <p className="text-red-400 text-xs mt-1">{errors.daysOff.message}</p>}
           </div>
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">First day of swing</label>
+        <label className="block text-sm font-medium text-gray-300 mb-1">First day of swing</label>
         <input
           type="date"
           {...register('startDate')}
-          className="w-full border rounded-lg px-3 py-2 text-sm"
+          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-100"
         />
-        {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate.message}</p>}
+        {errors.startDate && <p className="text-red-400 text-xs mt-1">{errors.startDate.message}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">First cycle starts on a...</label>
+        <label className="block text-sm font-medium text-gray-300 mb-2">First cycle starts on a...</label>
         <div className="flex gap-3">
           {(['on', 'off'] as const).map((phase) => (
-            <label key={phase} className="flex items-center gap-2 text-sm">
+            <label key={phase} className="flex items-center gap-2 text-sm text-gray-300">
               <input type="radio" {...register('cycleStartPhase')} value={phase} />
               {phase === 'on' ? 'Work day' : 'RDO'}
             </label>

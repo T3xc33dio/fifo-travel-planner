@@ -7,8 +7,8 @@ interface Props {
 export function EmptyState({ title, description, action }: Props) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-8 text-center gap-3">
-      <p className="font-semibold text-gray-700">{title}</p>
-      <p className="text-sm text-gray-500">{description}</p>
+      <p className="font-semibold text-gray-200">{title}</p>
+      <p className="text-sm text-gray-400">{description}</p>
       {action && (
         <button
           onClick={action.onClick}
