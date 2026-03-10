@@ -6,6 +6,7 @@ import { ItineraryCard } from '@/components/itinerary/ItineraryCard'
 import { ItineraryDetail } from '@/components/itinerary/ItineraryDetail'
 import { ItineraryForm } from '@/components/itinerary/ItineraryForm'
 import { EmptyState } from '@/components/shared/EmptyState'
+import { useSwingStatus } from '@/hooks/useSwingStatus'
 
 export function TripsPage() {
   const itineraries = useItineraryStore((s) => s.itineraries)
@@ -13,8 +14,11 @@ export function TripsPage() {
   const selectedItineraryId = useUiStore((s) => s.selectedItineraryId)
   const openSheet = useUiStore((s) => s.openSheet)
   const closeSheet = useUiStore((s) => s.closeSheet)
+  const status = useSwingStatus()
 
   const selectedItinerary = itineraries.find((i) => i.id === selectedItineraryId)
+
+  const conflictIds = new Set(status?.conflictingTrips.map((t) => t.id) ?? [])
 
   const grouped = useMemo(() => {
     const sorted = [...itineraries].sort((a, b) => a.startDate.localeCompare(b.startDate))
@@ -28,32 +32,58 @@ export function TripsPage() {
   }, [itineraries])
 
   return (
-    <div className="flex flex-col h-full bg-gray-900">
-      <div className="flex items-center justify-end px-4 pt-3 pb-2">
+    <div className="flex flex-col h-full" style={{ background: '#0d1117' }}>
+      {/* Header row */}
+      <div
+        className="flex items-center justify-between px-4 py-3 border-b"
+        style={{ background: '#161b22', borderColor: '#30363d' }}
+      >
+        <div>
+          <p className="text-xs text-gray-500 uppercase tracking-widest">Scheduled</p>
+          <p className="font-bold text-gray-100">{itineraries.length} trip{itineraries.length !== 1 ? 's' : ''}</p>
+        </div>
+        {status && status.conflictingTrips.length > 0 && (
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+            style={{ background: 'rgba(220,38,38,0.15)', border: '1px solid rgba(220,38,38,0.3)' }}
+          >
+            <span className="text-red-400 text-xs font-bold">
+              ⚠ {status.conflictingTrips.length} conflict{status.conflictingTrips.length > 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
         <button
           onClick={() => openSheet('add-itinerary')}
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-600 text-white text-xl"
+          className="w-9 h-9 flex items-center justify-center rounded-xl text-white text-xl font-bold"
+          style={{ background: '#f16738' }}
         >
           +
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
+      <div className="flex-1 overflow-y-auto px-4 py-3">
         {itineraries.length === 0 ? (
           <EmptyState
-            title="No trips yet"
+            title="No trips planned"
             description="Tap + to add your first itinerary"
             action={{ label: 'Add trip', onClick: () => openSheet('add-itinerary') }}
           />
         ) : (
           Array.from(grouped.entries()).map(([month, trips]) => (
             <div key={month} className="mb-6">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              <p
+                className="text-[10px] font-bold uppercase tracking-widest mb-2"
+                style={{ color: '#484f58' }}
+              >
                 {month}
               </p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 {trips.map((trip) => (
-                  <ItineraryCard key={trip.id} itinerary={trip} />
+                  <ItineraryCard
+                    key={trip.id}
+                    itinerary={trip}
+                    isConflict={conflictIds.has(trip.id)}
+                  />
                 ))}
               </div>
             </div>
@@ -65,23 +95,31 @@ export function TripsPage() {
         activeSheet === 'edit-itinerary' ||
         activeSheet === 'add-itinerary') && (
         <div
-          className="fixed inset-0 bg-black/60 z-50 flex items-end"
+          className="fixed inset-0 z-50 flex items-end"
+          style={{ background: 'rgba(0,0,0,0.7)' }}
           onClick={closeSheet}
         >
           <div
-            className="w-full bg-gray-800 rounded-t-2xl max-h-[85vh] overflow-y-auto border-t border-gray-700"
+            className="w-full rounded-t-2xl max-h-[85vh] overflow-y-auto border-t"
+            style={{ background: '#161b22', borderColor: '#30363d' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b border-gray-700">
-              <h2 className="font-semibold text-gray-100">
-                {activeSheet === 'add-itinerary'
-                  ? 'Add trip'
-                  : activeSheet === 'edit-itinerary'
-                  ? 'Edit trip'
-                  : 'Trip details'}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full" style={{ background: '#30363d' }} />
+            </div>
+            <div
+              className="flex items-center justify-between px-4 pb-3 border-b"
+              style={{ borderColor: '#30363d' }}
+            >
+              <h2 className="font-bold text-gray-100">
+                {activeSheet === 'add-itinerary' ? 'Add Trip' : activeSheet === 'edit-itinerary' ? 'Edit Trip' : 'Trip Details'}
               </h2>
-              <button onClick={closeSheet} className="text-gray-400 text-2xl leading-none">
-                &times;
+              <button
+                onClick={closeSheet}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 text-xl"
+                style={{ background: '#0d1117' }}
+              >
+                ✕
               </button>
             </div>
             {activeSheet === 'itinerary-detail' && selectedItinerary && (

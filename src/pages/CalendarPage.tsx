@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { RosterCalendar } from '@/components/calendar/RosterCalendar'
+import { StatsBar } from '@/components/calendar/StatsBar'
 import { ItineraryDetail } from '@/components/itinerary/ItineraryDetail'
 import { ItineraryForm } from '@/components/itinerary/ItineraryForm'
 import { useUiStore } from '@/store/uiStore'
@@ -22,13 +23,24 @@ export function CalendarPage() {
 
   if (!activePattern) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-center">
-        <p className="text-3xl">📅</p>
-        <p className="font-semibold text-gray-100">Set up your roster first</p>
-        <p className="text-sm text-gray-400">Add your FIFO swing pattern to see your schedule</p>
+      <div
+        className="flex flex-col items-center justify-center h-full gap-5 p-8 text-center"
+        style={{ background: '#0d1117' }}
+      >
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
+          style={{ background: 'rgba(241,103,56,0.15)', border: '1px solid rgba(241,103,56,0.3)' }}
+        >
+          📅
+        </div>
+        <div>
+          <p className="font-bold text-gray-100 text-lg">Set up your roster</p>
+          <p className="text-sm text-gray-500 mt-1">Add your FIFO swing pattern to see your schedule</p>
+        </div>
         <button
           onClick={() => navigate('/settings')}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium"
+          className="px-6 py-3 rounded-xl text-sm font-semibold text-white"
+          style={{ background: '#f16738' }}
         >
           Set up roster
         </button>
@@ -37,32 +49,50 @@ export function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" style={{ background: '#0d1117' }}>
+      {/* Stats dashboard bar */}
+      <StatsBar />
+
+      {/* Calendar — takes remaining height */}
       <div className="flex-1 min-h-0">
         <RosterCalendar />
       </div>
 
+      {/* Bottom sheet for add/view/edit */}
       {(activeSheet === 'itinerary-detail' ||
         activeSheet === 'edit-itinerary' ||
         activeSheet === 'add-itinerary') && (
         <div
-          className="fixed inset-0 bg-black/60 z-50 flex items-end"
+          className="fixed inset-0 z-50 flex items-end"
+          style={{ background: 'rgba(0,0,0,0.7)' }}
           onClick={closeSheet}
         >
           <div
-            className="w-full bg-gray-800 rounded-t-2xl max-h-[85vh] overflow-y-auto border-t border-gray-700"
+            className="w-full rounded-t-2xl max-h-[85vh] overflow-y-auto border-t"
+            style={{ background: '#161b22', borderColor: '#30363d' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b border-gray-700">
-              <h2 className="font-semibold text-gray-100">
+            {/* Sheet handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full" style={{ background: '#30363d' }} />
+            </div>
+            <div
+              className="flex items-center justify-between px-4 pb-3 border-b"
+              style={{ borderColor: '#30363d' }}
+            >
+              <h2 className="font-bold text-gray-100 tracking-wide">
                 {activeSheet === 'add-itinerary'
-                  ? 'Add trip'
+                  ? 'Add Trip'
                   : activeSheet === 'edit-itinerary'
-                  ? 'Edit trip'
-                  : 'Trip details'}
+                  ? 'Edit Trip'
+                  : 'Trip Details'}
               </h2>
-              <button onClick={closeSheet} className="text-gray-400 text-2xl leading-none">
-                &times;
+              <button
+                onClick={closeSheet}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 text-xl"
+                style={{ background: '#0d1117' }}
+              >
+                ✕
               </button>
             </div>
             {activeSheet === 'itinerary-detail' && selectedItinerary && (

@@ -32,8 +32,13 @@ export function useRosterDays(currentDate: Date): CalendarEvent[] {
     const rangeEnd = endOfMonth(addMonths(currentDate, 1))
     const events: CalendarEvent[] = []
 
+    // Build roster map
+    const rosterMap = activePattern
+      ? generateRosterDays(activePattern, overrides, rangeStart, rangeEnd)
+      : new Map<string, RosterDayKind>()
+
+    // Swing block events (one event per consecutive run)
     if (activePattern) {
-      const rosterMap = generateRosterDays(activePattern, overrides, rangeStart, rangeEnd)
       const ranges = groupIntoRanges(rosterMap)
       for (const run of ranges) {
         events.push({
@@ -48,25 +53,29 @@ export function useRosterDays(currentDate: Date): CalendarEvent[] {
       }
     }
 
+    // Itinerary events — detect conflicts with work days
     for (const itinerary of itineraries) {
-      const days = eachDayOfInterval({
-        start: parseISO(itinerary.startDate),
-        end: parseISO(itinerary.endDate),
+      const startDate = parseISO(itinerary.startDate)
+      const endDate = parseISO(itinerary.endDate)
+
+      if (endDate < rangeStart || startDate > rangeEnd) continue
+
+      // Check if any day in this itinerary falls on a work day
+      const days = eachDayOfInterval({ start: startDate, end: endDate })
+      const hasConflict = days.some((day) => {
+        const dk = format(day, 'yyyy-MM-dd')
+        return rosterMap.get(dk) === 'work'
       })
-      for (const day of days) {
-        const dateKey = format(day, 'yyyy-MM-dd')
-        if (day >= rangeStart && day <= rangeEnd) {
-          events.push({
-            id: `itin-${itinerary.id}-${dateKey}`,
-            title: itinerary.label,
-            start: day,
-            end: day,
-            allDay: true,
-            type: 'itinerary',
-            itineraryId: itinerary.id,
-          })
-        }
-      }
+
+      events.push({
+        id: `itin-${itinerary.id}`,
+        title: hasConflict ? `⚠ ${itinerary.label}` : itinerary.label,
+        start: startDate,
+        end: addDays(endDate, 1),
+        allDay: true,
+        type: hasConflict ? 'conflict' : 'itinerary',
+        itineraryId: itinerary.id,
+      })
     }
 
     return events

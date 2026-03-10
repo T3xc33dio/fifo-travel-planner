@@ -1,4 +1,4 @@
-export type CalendarEventType = 'work' | 'rdo' | 'travel' | 'leave' | 'itinerary'
+export type CalendarEventType = 'work' | 'rdo' | 'travel' | 'leave' | 'itinerary' | 'conflict'
 
 export interface CalendarEvent {
   id: string
