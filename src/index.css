@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: #f9fafb;
+}
+
+/* react-big-calendar overrides for mobile */
+.rbc-calendar {
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.rbc-month-view {
+  border: none;
+}
+
+.rbc-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 6px 0;
+  font-weight: 600;
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.rbc-day-bg {
+  min-height: 52px;
+}
+
+.rbc-date-cell {
+  padding: 4px 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.rbc-today {
+  background-color: transparent;
+}
+
+.rbc-today .rbc-date-cell a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 50%;
+}
+
+.rbc-off-range-bg {
+  background-color: rgba(0,0,0,0.02);
+}
+
+.rbc-event {
+  min-height: 16px;
+}
+
+.rbc-show-more {
+  font-size: 10px;
+  color: #2563eb;
+}
